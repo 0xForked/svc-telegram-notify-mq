@@ -15,16 +15,15 @@ type MessagingListener struct {
 }
 
 func (listener MessagingListener) SendNotify()  {
-	fmt.Println(fmt.Sprintf(
-		"Trying send message to: %s",
-		listener.chatID,
-	))
-	fmt.Println("=====================================================")
-
 	chatID, _ := strconv.ParseInt(listener.chatID, 10, 64)
 	message, err := listener.appConfig.GetTelegramConnection().SendMessage(
 		chatID, listener.message, &gotgbot.SendMessageOpts{},
 	)
+	fmt.Println(fmt.Sprintf(
+		"Trying send message to: %s",
+		message.Chat.Username,
+	))
+
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed send notificaion cause: %v\n", err))
 	} else {

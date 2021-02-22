@@ -86,10 +86,6 @@ func (event MessagingEvent) ListenToRabbitMQ() {
 	// previous code.
 	go func() {
 		for delivery := range msg {
-			// show log if new message is received
-			fmt.Println(fmt.Sprintf("Received a message: %s", delivery.Body))
-			fmt.Println("=====================================================")
-
 			// make it happen
 			event.handleEvent(delivery.Body)
 

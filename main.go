@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/aasumitro/svc-telegram-notify/config"
-	"github.com/aasumitro/svc-telegram-notify/src/events"
 	"github.com/aasumitro/svc-telegram-notify/src/handlers"
 	"runtime"
 )
@@ -20,9 +19,8 @@ func main() {
 		appConfig.GetAppVersion(),
 	))
 	// load server environment
-	//appConfig.SetupAMQPConnection()
+	appConfig.SetupAMQPConnection()
 	appConfig.SetupTelegramConnection()
 
 	handlers.NewTelegramCommandHandler(appConfig)
-	events.InitMessagingEvent(appConfig).ListenToRabbitMQ()
 }

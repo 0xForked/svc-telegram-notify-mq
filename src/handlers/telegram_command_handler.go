@@ -7,6 +7,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
 	"github.com/aasumitro/svc-telegram-notify/config"
+	"github.com/aasumitro/svc-telegram-notify/src/events"
+	"log"
 )
 
 type telegramCommandHandler struct {
@@ -18,10 +20,9 @@ func NewTelegramCommandHandler(
 )  {
 	commandHandler := &telegramCommandHandler{config: appConfig}
 
-	fmt.Println(fmt.Sprintf(
-		"%s has been started. . .",
+	log.Printf(fmt.Sprintf(
+		" [*] %s has been started",
 		appConfig.GetTelegramConnection().User.Username))
-	fmt.Println("waiting request from user. . .")
 
 	updater := ext.NewUpdater(appConfig.GetTelegramConnection(), nil)
 	dispatcher := updater.Dispatcher
@@ -47,6 +48,8 @@ func NewTelegramCommandHandler(
 	if err != nil {
 		fmt.Println("failed to start polling: " + err.Error())
 	}
+
+	events.InitMessagingEvent(appConfig).ListenToRabbitMQ()
 
 	// Idle, to keep updates coming in, and avoid bot stopping.
 	updater.Idle()
@@ -88,8 +91,7 @@ func (handler telegramCommandHandler) chatIDCallback(ctx *ext.Context) error {
 	_, err = callback.Message.EditText(
 		ctx.Bot,
 		fmt.Sprintf(
-			"Your Telegram ID : %d, \nYour Chat ID : %d",
-			ctx.Bot.User.Id,
+			"Your ID : %d, \nPlease complete your data immediately to make it easier to access your account",
 			ctx.EffectiveChat.Id,
 		),
 	nil)
@@ -110,7 +112,7 @@ func (handler telegramCommandHandler) helpCallback(ctx *ext.Context) error {
 
 	_, err = callback.Message.EditText(
 		ctx.Bot,
-		"Hello dear, i will help you to access your registered account to use our service",
+		"Hello dear, i will help you to make it easier to access your registered account to use our service",
 		nil)
 	if err != nil {
 		fmt.Println("failed send callback to user: " + err.Error())
